@@ -44,6 +44,17 @@ func (d MemDisk) Write(a uint64, v Block) {
 	copy(d.blocks[a][:], v)
 }
 
+func (d MemDisk) Writev(a uint64, v []Block) {
+	d.l.Lock()
+	defer d.l.Unlock()
+	if (a + uint64(len(v))) > uint64(len(d.blocks)) {
+		panic(fmt.Errorf("out-of-bounds write at %v", a))
+	}
+	for i, b := range v {
+		copy(d.blocks[a+uint64(i)][:], b)
+	}
+}
+
 func (d MemDisk) Size() uint64 {
 	// this never changes so we assume it's safe to run lock-free
 	return uint64(len(d.blocks))

@@ -22,6 +22,9 @@ type Disk interface {
 	// Expects a < Size().
 	Write(a uint64, v Block)
 
+	// Writev write a series disk block
+	Writev(a uint64, v []Block)
+
 	// Size reports how big the disk is, in blocks
 	Size() uint64
 

@@ -64,6 +64,16 @@ func (d FileDisk) Write(a uint64, v Block) {
 	}
 }
 
+func (d FileDisk) Writev(a uint64, v []Block) {
+	if (a + uint64(len(v))) > d.numBlocks {
+		panic(fmt.Errorf("out-of-bounds write at %v", a))
+	}
+	_, err := unix.Pwritev(d.fd, v, int64(a*BlockSize))
+	if err != nil {
+		panic("writev failed: " + err.Error())
+	}
+}
+
 func (d FileDisk) Size() uint64 {
 	return d.numBlocks
 }
